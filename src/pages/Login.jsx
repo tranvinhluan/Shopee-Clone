@@ -12,13 +12,14 @@ import Loading from "../components/Loading";
 import "../styles/Login.scss";
 import { loginSchema } from "../validations/UserValidation";
 import {setUser} from '../redux/_user';
+import { setCart } from "../redux/_cart";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState();
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -51,8 +52,8 @@ export default function Login() {
         if (token !== null) {
           setIsLogin(true);
           await getUser(res.data.token)
+          await getCart(res.data.token);
           navigate("/");
-
         }
       } catch (error) {
         console.log(error);
@@ -74,6 +75,23 @@ export default function Login() {
       });
 
       const action = setUser(res.data);
+      dispatch(action);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCart = async (token) => {
+    try {
+      const url = process.env.REACT_APP_BACKEND_HOST + "/cart";
+
+      const res = await axios({
+        url: url,
+        method: "get",
+        headers: { token },
+      });
+
+      const action = setCart(res.data);
       dispatch(action);
     } catch (error) {
       console.log(error);

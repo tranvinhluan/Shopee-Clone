@@ -2,10 +2,11 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
 import PrivateRouter from "./components/PrivateRouter";
-import { removeUser, setUser } from "./redux/_user";
+import { setUser } from "./redux/_user";
+import { setCart } from "./redux/_cart";
 import routers from "./routers/router";
+import "./App.css";
 
 function App() {
   const dispatch = useDispatch();
@@ -14,12 +15,12 @@ function App() {
   useEffect(() => {
     if (token) {
       getUser();
+      getCart();
     }
   }, []);
 
   const getUser = async () => {
     try {
-      // const endpoint = "https://k24-server-1.herokuapp.com/user";
       const endpoint = process.env.REACT_APP_BACKEND_HOST + "/user";
 
       const res = await axios({
@@ -32,6 +33,24 @@ function App() {
       dispatch(action);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getCart = async () => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: process.env.REACT_APP_API_BACKEND + "/cart",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+      });
+
+      const action = setCart(res.data);
+      dispatch(action);
+    } catch (error) {
+      console.log(error.message);
     }
   };
 

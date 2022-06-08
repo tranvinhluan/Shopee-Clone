@@ -1,16 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
+import NumberFormat from "react-number-format";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import logo2 from "../assets/images/logo-2.png";
 import Footer from "../components/Footer";
 import "../styles/CreateOrder.scss";
-import logo2 from "../assets/images/logo-2.png";
-import { useSelector } from "react-redux";
-import NumberFormat from "react-number-format";
 
 export default function CreateOrder() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  // const [isLogin, setIsLogin] = useState();
+  
   const [token] = useState(() => localStorage.getItem("token"));
 
   const { user } = useSelector((state) => state.userReducer); // dùng để lấy dữ liệu từ slice
@@ -165,6 +165,7 @@ export default function CreateOrder() {
                 className="btnCreateOrder"
                 onClick={() => {
                   createOrder(cart.products, user, isSum);
+                  
                 }}
               >
                 Đặt hàng

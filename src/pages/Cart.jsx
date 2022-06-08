@@ -1,47 +1,48 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
 import {
   UilMinus,
   UilPlus,
-  UilTrashAlt,
-  UilEditAlt,
+  UilTrashAlt
 } from "@iconscout/react-unicons";
-import "../styles/Cart.scss";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import NumberFormat from "react-number-format";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import logo2 from "../assets/images/logo-2.png";
-import Loading from "../components/Loading";
 import Footer from "../components/Footer";
-import "../styles/Cart.scss";
-import { useDispatch } from "react-redux";
 import { setCart } from "../redux/_cart";
-import NumberFormat from "react-number-format";
+import "../styles/Cart.scss";
 
-const URL = "https://k24-server-1.herokuapp.com";
 
 function Cart(props) {
-  const [products, setProducts] = useState([]);
-  const token = localStorage.getItem("token");
-  const [disabled, setDisabled] = useState(false);
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
+  const [disabled, setDisabled] = useState(false);
+
+  const token = localStorage.getItem("token");
+
+  const { cart } = useSelector((state) => state.cartReducer);
+
+  const products = cart ? cart.products : [];
 
   useEffect(() => {
     getProduct();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProduct = async () => {
     try {
       const data = await axios({
         method: "GET",
-        url: URL + "/cart",
+        url: process.env.REACT_APP_BACKEND_HOST + "/cart",
         headers: {
           "Content-Type": "application/json",
           token: token,
         },
       });
-      setProducts(data.data.products);
+
       const action = setCart(data.data);
       dispatch(action);
     } catch (error) {
@@ -60,18 +61,18 @@ function Cart(props) {
 
   const apiUpdateQuantity = async (products, product) => {
     try {
-      const resultfilter = products.filter((productItem) => {
+      const resultFilter = products.filter((productItem) => {
         return productItem.product !== product.product;
       });
       await axios({
         method: "PUT",
-        url: URL + "/cart",
+        url: process.env.REACT_APP_BACKEND_HOST + "/cart",
         headers: {
           "Content-Type": "application/json",
           token: token,
         },
         data: {
-          products: [...resultfilter, product],
+          products: [...resultFilter, product],
         },
       });
     } catch (error) {
@@ -103,18 +104,18 @@ function Cart(props) {
 
   const deleteProduct = async (product) => {
     try {
-      const resultfilter = products.filter((productItem) => {
+      const resultFilter = products.filter((productItem) => {
         return productItem.product !== product.product;
       });
       await axios({
         method: "PUT",
-        url: URL + "/cart",
+        url: process.env.REACT_APP_BACKEND_HOST + "/cart",
         headers: {
           "Content-Type": "application/json",
           token: token,
         },
         data: {
-          products: resultfilter,
+          products: resultFilter,
         },
       });
       await getProduct();
@@ -130,10 +131,6 @@ function Cart(props) {
     });
     return totalPrice;
   };
-
-  // if(products.length === 0) {
-  //     return <Loading />
-  // }
 
   return (
     <div>
@@ -172,9 +169,9 @@ function Cart(props) {
                   <div className="_2LUhSC">Số tiền</div>
                   <div className="HHdkhO">Thao tác</div>
                 </div>
-                {products.map((product) => {
+                {products.map((product, index) => {
                   return (
-                    <div className="_1glehh" key={product.product._id}>
+                    <div className="_1glehh" key={index}>
                       <div className="iT6kEc">
                         <div className="_1BehlF VXs3As">
                           <div className="_-0yJ2-">
@@ -209,7 +206,7 @@ function Cart(props) {
                                   onClick={() => {
                                     decreaseQuantity(product);
                                   }}
-                                  disabled={disabled}
+                                  disabled={product.quantity && product.quantity === 1}
                                 >
                                   <UilMinus />
                                 </button>

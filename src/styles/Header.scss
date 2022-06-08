@@ -136,6 +136,16 @@
                 opacity: 0.75;
             }
         }
+
+        & span {
+            position: absolute;
+            right: 140px;
+            top: 46px;
+            width: 24px;
+            color: red;
+            border-radius: 50%;
+            background: white;
+        }
     }
 
     &__user {
@@ -169,6 +179,12 @@
             font-weight: bold;
         }
     }
+}
+
+.header__user-name img {
+    width: 30px;
+    margin-left: 10px;
+    border-radius: 50%;
 }
 
 .header__user-name:hover {

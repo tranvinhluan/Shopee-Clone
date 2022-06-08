@@ -1,28 +1,26 @@
+import Tippy from "@tippyjs/react";
 import React, { useState } from "react";
-
 import { AiFillFacebook, AiFillInstagram } from "react-icons/ai";
 import { CgShoppingCart } from "react-icons/cg";
 import { GoSearch } from "react-icons/go";
-
-import Tippy from "@tippyjs/react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "tippy.js/dist/tippy.css";
-
-import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
-
 import logoWhite from "../assets/images/logoWhite.png";
+import { setCart } from "../redux/_cart";
 import "../styles/Header.scss";
 
 function Header(props) {
-  // let [searchParams, setSearchParams] = useSearchParams();
-  // const keyword = searchParams.get("keyword");
-
   const navigate = useNavigate();
-
-  const { user } = useSelector((state) => state.userReducer);
+  const dispatch = useDispatch();
 
   const token = localStorage.getItem("token");
   const [search, setSearch] = useState("");
+
+  const { user } = useSelector((state) => state.userReducer);
+
+  const { cart } = useSelector((state) => state.cartReducer);
+  const products = cart ? cart.products : []; //lay product tu redux
 
   const handleSearch = () => {
     navigate("/search?keyword=" + search);
@@ -49,7 +47,6 @@ function Header(props) {
           src={logoWhite}
           alt=""
           onClick={() => {
-            // setSearch("")
             navigate("/");
           }}
         />
@@ -81,6 +78,7 @@ function Header(props) {
 
       <section className="header__cart">
         <CgShoppingCart onClick={handleCart} />
+        <span className="quantity">{products && products.length}</span>
       </section>
 
       <section className="header__user">
@@ -116,6 +114,7 @@ function Header(props) {
                 <button
                   onClick={() => {
                     localStorage.removeItem("token");
+                    dispatch(setCart(null)); //reset cart trong redux khi dang xuat
                     navigate("/");
                   }}
                 >
@@ -125,7 +124,9 @@ function Header(props) {
             }
             interactive
           >
-            <div className="header__user-name">{user ? user.name : ""}</div>
+            <div className="header__user-name">{user ? user.name : ""}
+            <img src={user && user.avatar} alt="" />
+            </div>
           </Tippy>
         )}
       </section>

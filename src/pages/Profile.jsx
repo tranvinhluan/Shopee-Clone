@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { IoCamera } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
+import { setUser } from "../redux/_user";
 import "../styles/Profile.scss";
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState();
   // const [avatar, setAvatar] = useState();
@@ -29,6 +32,10 @@ export default function Profile() {
       });
     
       setData(res.data);
+      
+      //Cap nhat lai thong tin user moi nhat khi co thay doi de hien thi len header
+      const action = setUser(res.data);
+      dispatch(action);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -58,8 +65,7 @@ export default function Profile() {
           address: data.address,
           //avatar: data.avatar,
           avatar:
-            // "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWFLP-G1MZF20B18zKRTYtngwjUnqFgPi9jA&usqp=CAU",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3TDQBB-_F1sfu-gElz73vtUAdlOdLerHDw&usqp=CAU",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
         },
         headers: {
           "Content-Type": "application/json",
