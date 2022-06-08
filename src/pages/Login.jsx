@@ -19,7 +19,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
